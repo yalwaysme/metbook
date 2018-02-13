@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="css/style.css">
+<head>
+    <title>Accounts</title>
+</head>
+
+<header>
+  <h1> Accounts Header</h1>
+</header>
+
+<body>
+  <main>
+    <h1>Accounts</h1>
+  </main>
+</body>
+
+<footer>
+  <p> This is the Footer
+</footer>
+
+</html>

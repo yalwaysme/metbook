@@ -1,3 +1,43 @@
 body {
   background-color: grey; /*temp colour*/
 }
+
+/* This will wrap the page together, everything will be held within this section */
+
+#wrapper {
+  width: 1024px;
+  height: 768px;
+  background-color: blue;
+}
+
+/* This is the ID for the seach bar */
+
+#search{
+
+}
+
+/* This is the ID for the menu */
+
+#menu {
+  width: 1024px;
+  height: 200px;
+  background-color: yellow;
+}
+
+/* This is the ID for where the name of the page will be placed */
+
+#pageName {
+
+}
+
+/* This is the ID for the sign up button */
+
+#signUp{
+
+}
+
+/* This is the ID for the log in button */
+
+#logIn {
+
+}

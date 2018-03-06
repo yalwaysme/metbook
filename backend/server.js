@@ -1,11 +1,11 @@
-'use static'
+'use strict'
 
 const express = require ('express');
 const mysql = require('mysql2/promise');
 
 
 
-const config = require('./config');
+const config = require('./config.js');
 
 const sqlPromise = mysql.createConnection(config.mysql);
 
@@ -31,8 +31,8 @@ async function pullBooks(req,res){
 
 async function addRating(req,res){
   const newRating ={
-    userId: req.query.userId
-    score: req.query.score
+    userId: req.query.userId,
+    score: req.query.score,
     description: req.query.desc
   }
   const [rows] = await sql.query(sql.format('INSERT INTO Reviews SET ?', newRating)); // maybe rename Reviews

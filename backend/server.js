@@ -41,6 +41,17 @@ async function addRating(req,res){
 
 
 
+async function getRatings(req,res){
+
+  // add code here
+  console.log("some books");
+
+
+
+}
+
+
+
 
 module.exports.add = {
   addRating : addRating

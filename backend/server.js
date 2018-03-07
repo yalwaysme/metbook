@@ -5,7 +5,7 @@ const express = require ('express');
 
 
 
-const config = require('./config.js');
+const config = require('./config');
 
 // const sqlPromise = mysql.createConnection(config.mysql);
 

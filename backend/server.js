@@ -13,6 +13,14 @@ const config = require('./config.js');
 // add DB
 const app = express();
 
+
+// serve static pages
+app.use('/', express.static(config.pages, { extensions: ['html','css'] }));
+
+// output log to the console
+app.use('/', (req, res, next) => { console.log(new Date(), req.method, req.url); next(); });
+
+
 // listen for requests
 app.listen(8080, (err) => {
   if (err)

@@ -11,3 +11,5 @@ module.exports.mysql = {
   database: 'metBookDB', // change to real name
 
 };
+
+module.exports.pages = path.join(__dirname, '../frontEnd/pages/');

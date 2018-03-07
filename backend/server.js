@@ -1,17 +1,25 @@
 'use strict'
 
 const express = require ('express');
-const mysql = require('mysql2/promise');
+// const mysql = require('mysql2/promise');
 
 
 
-const config = require('./config.js');
+const config = require('./config');
 
-const sqlPromise = mysql.createConnection(config.mysql);
+// const sqlPromise = mysql.createConnection(config.mysql);
 
 
 // add DB
 const app = express();
+
+
+// serve static pages
+app.use('/', express.static(config.pages, { extensions: ['html','css'] }));
+
+// output log to the console
+app.use('/', (req, res, next) => { console.log(new Date(), req.method, req.url); next(); });
+
 
 // listen for requests
 app.listen(8080, (err) => {

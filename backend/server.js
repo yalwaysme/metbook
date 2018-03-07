@@ -1,13 +1,13 @@
 'use strict'
 
 const express = require ('express');
-const mysql = require('mysql2/promise');
+// const mysql = require('mysql2/promise');
 
 
 
 const config = require('./config.js');
 
-const sqlPromise = mysql.createConnection(config.mysql);
+// const sqlPromise = mysql.createConnection(config.mysql);
 
 
 // add DB

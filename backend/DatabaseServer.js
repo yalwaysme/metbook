@@ -54,7 +54,7 @@ async function authenticate(req, res){
 
 async function homeData(req, res) {
   const sql = await init();
-  let objs = [];
+  let objs = [];``
   let raw = [];
   let rows =[];
   //possible split
@@ -227,20 +227,6 @@ async function addUser(req, res){
     result = 'fail';
   }
   res.send(result);
-}
-
-async function addUser(req, res){
-  const sql = await init();
-  //maybe can modify
-  const insertQuery = sql.format('INSERT INTO User SET ? ;', {obj.fName, obj.lName, obj.userName, obj.imagePath});
-  const result = await sql.query(insertQuery);
-  if(result!=null){
-    result = 'success';
-  }else{
-    result = 'fail';
-  }
-  res.send(result);
-
 }
 
 //custom your picks function required will be done later as can come up in mnay areas

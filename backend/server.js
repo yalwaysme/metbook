@@ -24,72 +24,32 @@ app.use('/', (req, res, next) => { console.log(new Date(), req.method, req.url);
 // listen for requests
 app.listen(8080, (err) => {
   if (err)
-    console.error('error starting server', err);
+    console.error('error starting applicaitonServer server', err);
   else
-    console.log('server started');
+    console.log('applicaitonServer server started');
   }
 );
 
 
 
-async function pullBooks(title,sort){
-  // add params to specifiy what we are pulling , ATM pulling all books at once
+async function addReview(req,res){
+  const response = await fetch('/database/reviews',{
+    method: 'POST',
+    body:data
+  });
 
-  let query = 'SELECT Title, Author, DateOfPublication, Publisher, ISBN, Description, Image, Type FROM Book';
-  let order;
-  switch(sort){
-    case 'asc':
-    case 'a2z':order = 'title ASC'; break;
-    case 'dsc':
-    case 'z2a':order = 'title DESC';break;
-    case 'oldest':order = 'id ASC';break;
-    case 'newest':
-    default: order = 'id DESC';
-
-  }
-  query += ' ORDER BY ' + order;
-
-
-  const [rows] = await sql.query(query);
-
-  return rows.map((row) => {
-      return {
-        id: row.id,
-        title: row.title,
-        author: row.author,
-        dateOfPublication: row.dateOfPublication,
-        publisher: row.publisher,
-        ISBN: row.ISBN,
-        image: row.image,
-        type: row.type,
-      };
-    });
+  res.send(response);
 }
+async function  loadBooks(req,res){
 
-async function addRating(req,res){
-  const newRating ={
-    userId: req.query.userId,
-    score: req.query.score,
-    description: req.query.desc
-  }
-  const [rows] = await sql.query(sql.format('INSERT INTO Reviews SET ?', newRating)); // maybe rename Reviews
-  return { id: rows.insertId, title: newRating.userId,score: newRating.score,description: newRating.description };
 }
 
 
 
 async function getRatings(req,res){
-
   // add code here
   console.log("some books");
-
-
-
 }
 
 
-
-
-module.exports.add = {
-  addRating : addRating
-}
+app.get('/api/home/books',addReviews);

@@ -18,6 +18,8 @@ database.get('/topreccomended/:term', retrieveBooks);
 database.get('/account:token', authenticate);
 
 database.post('/reviews/', addReview);
+database.post('/users/staff',addStaff);
+database.post('/users/user',addUser);
 //extra posts but like 3
 //error checking and insertion
 //possible middleware required for image path calculation - probably actually
@@ -154,7 +156,7 @@ async function reccomendedData(req, res) {
 
 async function retrieveBooks(req, res) {
   const sql = await init();
-  const [rows] = await sql.query('SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM Book WHERE title = ' + req.query.term);
+  const [rows] = await sql.query('SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM Book WHERE title LIKE ' + req.query.term);
   let objs = [];
 
   for (let i = 0; i < rows.length; i++) {
@@ -192,8 +194,8 @@ res.send(result);
 async function addReview(req, res){
   const sql = await init();
   //maybe can modify
-  const insertQuery = sql.format('INSERT INTO Review SET ? ;', {obj.bookId obj.score, obj.description, obj.publisher});
-  const insertQuery = sql.format('INSERT INTO History SET ? ;', {obj.id, obj.bookId});
+  const insertQuery = sql.format('INSERT INTO Review SET ? ;', {req.bookId req.score, req.description, req.publisher});
+  const insertQuery = sql.format('INSERT INTO History SET ? ;', {req.id, req.bookId});
   const result = await sql.query(insertQuery);
   if(result!=null){
     result = 'success';
@@ -206,7 +208,7 @@ async function addReview(req, res){
 async function addStaff(req, res){
   const sql = await init();
   //maybe can modify, no id requred due to auto_increment
-  const insertQuery = sql.format('INSERT INTO Staff SET ? ;', {obj.fName obj.lName, obj.email, obj.contactNumber});
+  const insertQuery = sql.format('INSERT INTO Staff SET ? ;', {req.fName req.lName, req.email, req.contactNumber});
   const result = await sql.query(insertQuery);
   if(result!=null){
     result = 'success';
@@ -215,6 +217,7 @@ async function addStaff(req, res){
   }
   res.send(result);
 }
+
 
 async function addUser(req, res){
   const sql = await init();

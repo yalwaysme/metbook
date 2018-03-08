@@ -1,17 +1,39 @@
 'use strict'
 
 const express = require ('express');
-// const mysql = require('mysql2/promise');
 
-
-
-const config = require('./config');
-
-// const sqlPromise = mysql.createConnection(config.mysql);
-
-
-// add DB
 const app = express();
+
+
+async function addReview(req,res){
+  let url = 'database/reviews';
+  url +='?userID='+req.userID + '&name=' + req.name + '&description=' + req.description + '&score=' + req.score + 'bookId=' + req.bookId + 'publisher' + req.publisher;
+  const response = await fetch('url',{method: 'POST'});
+
+  res.send(response); // fail or sucess response
+}
+
+
+async function addStaff(req,res){
+  let url = '?fName='+req.fName + '&lName=' + req.lName + '&email=' + req.email + '&contactNumber=' + req.contactNumber;
+  const response = await fetch('url',{method: 'POST'});
+
+  res.send(response);
+}
+
+
+
+
+async function  loadBooks(req,res){
+
+}
+
+async function getRatings(req,res){
+  // add code here
+  console.log("some ratings");
+}
+
+
 
 
 // serve static pages
@@ -30,26 +52,5 @@ app.listen(8080, (err) => {
   }
 );
 
-
-
-async function addReview(req,res){
-  const response = await fetch('/database/reviews',{
-    method: 'POST',
-    body:data
-  });
-
-  res.send(response);
-}
-async function  loadBooks(req,res){
-
-}
-
-
-
-async function getRatings(req,res){
-  // add code here
-  console.log("some books");
-}
-
-
-app.get('/api/home/books',addReviews);
+app.post('/api/home/books',addReviews);
+app.post('/api/users/staff',addStaff)

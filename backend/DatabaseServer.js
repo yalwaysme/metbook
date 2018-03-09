@@ -16,66 +16,131 @@ database.get('/home/:term', retrieveBooks);
 database.get('/newIn/:term', retrieveBooks);
 database.get('/topreccomended/:term', retrieveBooks);
 database.get('/account:token', authenticate);
-
+database.get('/searchResult:term', retrieveBooks);
 database.post('/reviews/', addReview);
-//extra posts but like 3
-//error checking and insertion
-//possible middleware required for image path calculation - probably actually
-//codes will be added later
+database.post('/createaccount/', addUser);
 
-//possible not requied as data is already parsed as json but will double check this requirement
+//Stringify raw objects
 function jsonStringify(rawList) {
   for (i = 0; i < rawList.length; i++) {
-    rawList[i] = JSON.stringify(rawList[i]);
+    if(rawList[i].length=1){
+      rawList[i] = JSON.stringify(rawList[i]);
+    }
+    for(let i=0; i<rawList[j].length; j++){
+      rawList[i][j] = JSON.stringify(rawList[i][j]);
+    }
   }
-
-  return rawList;
+  return processedList;
 }
 
 //database retrieve functions
 async function authenticate(req, res){
   const sql = await init();
+  let raw = [];
+  let result = await sql.query('SELECT id FROM USER WHERE id =' + req.token);
 
-  let result = await sql.query('SELECT '+ req.query.token + 'FROM USER');
-
-  if(result!=null){
+  if(id){
     let id = result;
     result = [];
-    //will double check
-     result.push({user id: id});
-     result.push(await sql.query('SELECT' + token + ', fname, lname, userName, imagePath'));
-     result.push(await sql.query('SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM BOOK WHERE History.userId =' + req.query.token + 'AND History.bookId = Book.bookId'));
-     result.push(await sql.query('SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM BOOK WHERE YourPicks.userId =' + token + 'AND YourPicks.bookId = Book.bookId'));
-     result.push(await sql.query('SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type, score, description FROM BOOK WHERE Reviews.userId =' + token + 'AND Reviews.bookId = Book.bookId'));
-     result = jsonStringify(result);
-  }
-  res.send(result);
+     raw.push({userid: id});
+     //User table
+     let query = 'SELECT fname, lname, userName, imagePath FROM USER WHERE id=' + req.token;
+     let [rows] = await sql.query(query);
+     if(rows.length!=0){
+     for (i = 0; i < rows.length; i++) {
+       raw.push({
+         fname: rows[i].fname,
+         lname: rows[i].lname,
+         userName: rows[i].userName,
+         imagePath: rows[i].imagePath,
+       });
+     }
+   }else{
+     raw.push(false);
+   }
+    objs.push(raw);
+ }else{
+   raw.push(false)
+ }
+
+     //History
+     let query = 'SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM BOOK WHERE History.userId =' + req.token + 'AND History.bookId = Book.bookId';
+     let [rows] = await sql.query(query);
+     if(rows.length!=0){
+     for (i = 0; i < rows.length; i++) {
+       raw.push({
+         title: rows[i].title,
+         author: rows[i].author,
+         dateofpublication: rows[i].dateofpublication,
+         publisher: rows[i].publisher,
+         isbn: rows[i].isbn,
+         description: rows[i].description,
+         imagePath: rows[i].imagePath,
+         type: rows[i].type,
+       });
+     }
+        objs.push(raw);
+   }else{
+     raw.push(false);
+   }
+
+     //Your picks
+     let query = 'SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM BOOK WHERE YourPicks.userId =' + token + 'AND YourPicks.bookId = Book.bookId';
+     let [rows] = await sql.query(query);
+     if(rows.length!=0){
+     for (i = 0; i < rows.length; i++) {
+       raw.push({
+         title: rows[i].title,
+         author: rows[i].author,
+         dateofpublication: rows[i].dateofpublication,
+         publisher: rows[i].publisher,
+         isbn: rows[i].isbn,
+         description: rows[i].description,
+         imagePath: rows[i].imagePath,
+         type: rows[i].type,
+       });
+     }
+        objs.push(raw);
+   }else{
+     raw.push(false)
+   }
+
+     //Reviews
+     let query = 'SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type, score, description FROM BOOK, Reviews WHERE Reviews.userId =' + token + 'AND Reviews.bookId = Book.bookId';
+     let [rows] = await sql.query(query);
+     if(rows.length!=0){
+     for (i = 0; i < rows.length; i++) {
+       raw.push({
+         title: rows[i].title,
+         author: rows[i].author,
+         dateofpublication: rows[i].dateofpublication,
+         publisher: rows[i].publisher,
+         isbn: rows[i].isbn,
+         description: rows[i].description,
+         imagePath: rows[i].imagePath,
+         type: rows[i].type,
+         score: rows[i].score,
+       });
+     }
+        objs.push(raw);
+   }else{
+     raw.push(false)
+   }
+     result = jsonStringify(objs);
+     res.send(200, result);
 }
 
+
+//Retriving home data
 async function homeData(req, res) {
   const sql = await init();
   let objs = [];
   let raw = [];
-  let rows =[];
-  //possible split
-  rows.push([rows] = await sql.query('SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM Book ORDERBY Date'));
-
-  for (i = 0; i < rows.COUNT; i++) {
-    raw.push({
-      title: rows[i].title,
-      author: rows[i].author,
-      dateofpublication: rows[i].dateofpublication,
-      publisher: rows[i].publisher,
-      isbn: rows[i].isbn,
-      description: rows[i].description,
-      imagePath: rows[i].imagePath,
-      type: rows[i].type,
-    });
-  }
-  objs.push(raw);
-
-  rows.push(await sql.query('SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM Book WHERE' + InterestingReads.id = Book.id));
-  for (i = 0 < i < rows.COUNT; i++) {
+  //Interesting Reads
+  let query = 'SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, Categories.title, Categories.description FROM Book WHERE InterestingReads.id = Book.id AND Categories.id = Book.catId';
+  let [rows] = await sql.query(query);
+  if(rows.length!=0){
+  for (i = 0; i < rows.length; i++) {
     raw.push({
       type: rows[i].title,
       title: rows[i].author,
@@ -84,31 +149,38 @@ async function homeData(req, res) {
     });
   }
   objs.push(raw);
-  rows.push(await sql.query('SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM Book WHERE' + InterestingReads.id = Book.id));
-  for (i = 0; i < rows.COUNT; i++) {
+}else{
+  objs.push(false);
+}
+  //Categories data
+  let query = 'SELECT type, description FROM Categories';
+  let [rows] = await sql.query(query);
+  if(rows.length!=0){
+  for (i = 0; i < rows.length; i++) {
     raw.push({
-      title: rows[i].title,
-      author: rows[i].author,
-      dateofpublication: rows[i].dateofpublication,
-      publisher: rows[i].publisher,
-      isbn: rows[i].isbn,
-      description: rows[i].description,
-      imagePath: rows[i].imagePath,
-      type: rows[i].type,
+      type: rows[i].title,
+      description: rows[i].author,
     });
   }
   objs.push(raw);
-
-  processedList = jsonStringify(objs);
-  res.send(processedList);
+}else{
+  objs.push(false);
 }
 
+  processedList = jsonStringify(objs);
+  res.send(200, processedList);
+}
+
+//New in data
 async function newInData(req, res) {
   const sql = await init();
-  const [rows] = await sql.query('SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM Book ORDERBY Date');
+  let query = 'SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM Book ORDERBY Date';
+  let [rows] = await sql.query(query);
   let objs = [];
 
-  for (let i = 0; i < rows.length; i++) {
+  //loop to create json objects
+  if(rows.length!=0){
+  for (let i = 0; i < rowss.length; i++) {
     objs.push({
       title: rows[i].title,
       author: rows[i].author,
@@ -120,43 +192,48 @@ async function newInData(req, res) {
       type: rows[i].type,
     });
   }
+}else{
+  objs.push(false);
+}
   processedList = jsonStringify(objs);
-  res.send(processedList);
-
-  //More queries?
+  res.send(200, processedList);
 }
 
+//reccomended data
 async function reccomendedData(req, res) {
   const sql = await init();
-  const [rows] = await sql.query('SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM Book WHERE score>3');
+  let query = 'SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM Book WHERE score>3';
+  let [rows] = await sql.query(query);
   let objs = [];
 
+  if(rows.length!=0){
   for (let i = 0; i < rows.length; i++) {
     objs.push({
       title: rows[i].title,
       author: rows[i].author,
       dateofpublication: rows[i].dateofpublication,
-      publisher: rows[i].publisher,
+      publisher: rows[i]publisher,
       isbn: rows[i].isbn,
       description: rows[i].description,
       imagePath: rows[i].imagePath,
       type: rows[i].type,
     });
   }
+}else{
+  objs.push(false);
+}
   processedList = jsonStringify(objs);
-  res.send(processedList);
-
-  //More queries?
+  res.send(200, processedList);
 
 }
 
-
-
+//Standard retrieve books, uses search term
 async function retrieveBooks(req, res) {
   const sql = await init();
-  const [rows] = await sql.query('SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM Book WHERE title = ' + req.query.term);
-  let objs = [];
-
+  let query = 'SELECT title, author, dateofpublication, publisher, isbn, description, imagePath, type FROM Book WHERE title = ' + req.term;
+  let [rows] = await sql.query(query);
+  let objs=[];
+  if(rows.length!=0){
   for (let i = 0; i < rows.length; i++) {
     objs.push({
       title: rows[i].title,
@@ -169,78 +246,77 @@ async function retrieveBooks(req, res) {
       type: rows[i].type,
     });
   }
+}else{
+  objs.push(false);
+}
   processedList = jsonStringify(objs);
-  res.send(processedList);
+  res.send(200, processedList);
 }
 
-//insertion
-function addBook(obj){
-const sql = await init();
-//maybe can modify
-const insertQuery = sql.format('INSERT INTO Book SET ? ;', {obj.title, obj.author, obj.dateofpublication, obj.publisher, obj.isbn, obj.description, obj.imagePath, obj.type, obj.score});
-const insertQuery = sql.format('INSERT INTO PlacesToFind SET ? ;', {obj.bookId, obj.title, obj.url, obj.supportInfo});
-const result = await sql.query(insertQuery);
-if(result!=null){
-  result = 'success';
-}else{
-  result = 'fail';
+function insertChecks(results, insertQuery){
+  if(insertQuery.length!=0){
+    results.push(true);
+  }else{
+    results.push(false);
+  }
+  return results;
 }
-res.send(result);
+//Insertion
+async function addBook(req, res){
+  let results = [];
+const sql = await init();
+//Insert to Book
+const insertQuery = sql.format('INSERT INTO PlacesToFind SET ? ;', {title: req.title, url: req.url, supportinfo: req.supportInfo});
+results = insertChecks(results, insertQuery);
+let query = 'SELECT id FROM PlacesToFind WHERE PlacesToFind.title = '+ req.title;
+let placesID = await sql.query(query);
+let query = 'SELECT id FROM Categories WHERE Categories.title = '+ req.cattitle;
+let catID = await sql.query(query);
+const insertQuery = sql.format('INSERT INTO Book SET ? ;', {title: req.title, author: req.author,  dateofpublication: req.dateofpublication, publisher: req.publisher, isbn: req.isbn,  description: req.description,  imagePath: req.imagePath, typeId: catID , reviewId: , placesToFind: result});
+results = insertChecks(results, insertQuery);
+res.send(200, results);
 }
 
 
 async function addReview(req, res){
+  results = [];
   const sql = await init();
-  //maybe can modify
-  const insertQuery = sql.format('INSERT INTO Review SET ? ;', {obj.bookId obj.score, obj.description, obj.publisher});
-  const insertQuery = sql.format('INSERT INTO History SET ? ;', {obj.id, obj.bookId});
-  const result = await sql.query(insertQuery);
-  if(result!=null){
-    result = 'success';
-  }else{
-    result = 'fail';
-  }
-  res.send(result);
+  //Insert to review
+  const insertQuery = sql.format('INSERT INTO Review SET ?;', {bookId: req.id, score: req.score, description: req.description});
+  results = insertChecks(results, insertQuery);
+  //Insert to History
+  const insertQuery = sql.format('INSERT INTO History SET ? ;', {userId: req.userId, bookId: req.bookId});
+  results = insertChecks(results, insertQuery);
+  res.send(200, results);
 }
 
 async function addStaff(req, res){
+  results = [];
   const sql = await init();
-  //maybe can modify, no id requred due to auto_increment
-  const insertQuery = sql.format('INSERT INTO Staff SET ? ;', {obj.fName obj.lName, obj.email, obj.contactNumber});
-  const result = await sql.query(insertQuery);
-  if(result!=null){
-    result = 'success';
-  }else{
-    result = 'fail';
-  }
-  res.send(result);
+  //Insert to staff
+  const insertQuery = sql.format('INSERT INTO Staff SET ? ;', {fname: req.fName, lname: req.lName, email: req.email, phone: req.contactNumber});
+  results = insertChecks(results, insertQuery);
+  res.send(200, results);
 }
 
+
 async function addUser(req, res){
+  results = [];
   const sql = await init();
   //maybe can modify
-  const insertQuery = sql.format('INSERT INTO Categories SET ? ;', {obj.type, obj.description});
-  const result = await sql.query(insertQuery);
-  if(result!=null){
-    result = 'success';
-  }else{
-    result = 'fail';
-  }
-  res.send(result);
+  const insertQuery = sql.format('INSERT INTO USER SET ? ;',{ fname: req.query.obj.fname, lname: req.query.obj.lname, username: req.query.obj.username, imagePath: req.query.obj.imagePath});
+  results = insertChecks(results, insertQuery);
+  res.send(200, results);
 }
 
-async function addUser(req, res){
+
+async function addCategory(req, res){
+  resuls = [];
   const sql = await init();
   //maybe can modify
-  const insertQuery = sql.format('INSERT INTO User SET ? ;', {obj.fName, obj.lName, obj.userName, obj.imagePath});
-  const result = await sql.query(insertQuery);
-  if(result!=null){
-    result = 'success';
-  }else{
-    result = 'fail';
-  }
-  res.send(result);
-
+  const insertQuery = sql.format('INSERT INTO Categories SET ? ;', {type: req.type, title: req.title, description: req.description});
+  results = insertChecks(results, insertQuery);
+  res.send(200, results);
 }
 
 //custom your picks function required will be done later as can come up in mnay areas
@@ -281,8 +357,5 @@ async function releaseConnection(connection) {
 
 process.on('unhandledRejection', console.error);
 
-//modules, possibly more
-module.exports.authenticate = authenticate;
 
-
-database.listen(8080);
+database.listen(3000, console.log("Running"));

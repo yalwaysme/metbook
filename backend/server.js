@@ -2,9 +2,10 @@
 let express = require('express');
 const mysql = require('mysql2/promise');
 
+const intialDb = require('./intialScript');
+intialDb.makeTables();
 
 const config = require('./config');
-//const initialDb = require('./intialScript').makeTables;
 
 const app = express();
 
@@ -23,9 +24,15 @@ const connection = mysql.createConnection(config.mysql);
 
 // add a review, use URL to insert param
 async function addReview(req,res){
-  const sql = await sqlPromise;
-  const reviewData = {bookId: req.id, score: req.score, description: req.description}
- const [rows] = await sql.query(sql.format('INSERT INTO Review SET ?;', reviewData));
+  const sql = await connection;
+
+  const reviewData = {score: req.score, description: req.description};
+  const userBookData = {userId: req.userId,bookId: req.id};
+  const [rows] = await sql.query(sql.format('INSERT INTO Review SET ?;', reviewData));
+  const [rows] = await sql.query(sql.format('INSERT INTO UserReviews SET ?;', userBookData));
+
+
+
 
 }
 

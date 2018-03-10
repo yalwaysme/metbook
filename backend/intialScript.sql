@@ -100,3 +100,12 @@ create table if not exists back.UserReviews (
   foreign key (userId) references User(id),
   foreign key (bookId) references Book(bookId),
 );
+
+
+
+
+insert ignore into back.Book values (1,'Some Book","Bob Green',10/12/1993,1234,"A fake book i just made","fakeImg/fake");
+
+insert ignore into back.PlacesToFind values (1,1,'Amazon','amazon.com','wtf is support info');
+
+insert ignore into back.User values (1,'joe','joeson','mrJoe','dontKnowMate');

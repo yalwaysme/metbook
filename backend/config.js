@@ -7,7 +7,7 @@ module.exports.mysql = {
   user: 'root',
   password: 'root',
   charset: 'UTF8MB4',
-  database: 'back', // change to real name
+  database: 'back', 
 
 };
 

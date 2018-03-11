@@ -1,36 +1,21 @@
 'use static';
 
-// const bodyParser = require('body-parser');
 const express = require('express');
 const mysql = require('mysql2/promise');
-// const passport = require('passport');
 
-const config = require('./config');
-const user = require('./user');
 
 // Database
-// const intialDb = require('./intialScript');
-// intialDb.makeTables();
+const intialDb = require('./intialScript');
+intialDb.makeTables();
+
+const config = require('./config');
+
+
 
 // parses data submitted through post
 // const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 const app = express();
-
-// serve static pages
-app.use(express.static('public'));
-
-// set view engine
-app.set('view engine', 'ejs');
-
-// routes
-app.get('/', (req, res)=>{
-    res.render('home');
-});
-
-// user routes
-app.use('/user', user);
-
 
 const connection = mysql.createConnection(config.mysql);
 
@@ -38,30 +23,87 @@ const connection = mysql.createConnection(config.mysql);
 (async () => {
   const sql = await connection;
   sql.on('error',(err) =>{
-    console.error(err);
+    console.log(err);
     sql.end();
   });
 })();
 
 
-// add a review, use URL to insert param
+// async function getBooks(req,res){
+//   try{
+//     const sql = await connection;
+//     let order;
+//     switch(req.order){
+//       case(a2z):order = 'title ASC';break;
+//       case(z2a):order ='title DESC';break;
+//
+//       case(auth):order = 'author DESC';break;
+//
+//
+//       case(isbn):order ='isbn ASC';break;
+//
+//       case(publisher):order='publisher ASC';break;
+//       default:'id DESC'; // order by newest in
+//
+//
+//     }
+//   }
+// }
+
+
+// add a review, responsed ok if update ok else give err + log it
+// adds to userReviews and reviews
 async function addReview(req,res){
-  const sql = await connection;
+  try{
+    const sql = await connection;
+    const reviewData = {score: req.score, description: req.description};
+  //  const userBookData = {userId: req.userId,bookId: req.bookId};
+    await sql.query(sql.format('INSERT INTO Reviews SET ?;', reviewData));
+    //await sql.query(sql.format('INSERT INTO UserReviews SET ?;', userBookData));
+    res.sendStatus(200);
+  }catch(e){
+    error(res,e);
+  }
+}
 
-  const reviewData = {score: req.score, description: req.description};
-  const userBookData = {userId: req.userId,bookId: req.id};
-  const [rows] = await sql.query(sql.format('INSERT INTO Review SET ?;', reviewData));
-  const [rows] = await sql.query(sql.format('INSERT INTO UserReviews SET ?;', userBookData));
+// // add a user, return ok or an error , error gets logged
+async function addUser(req,res){
+  try{
+    const sql = await connection;
+    const userData = {fname: req.fName, lname: req.lName, userName: req.userName,imagePath: req.img}
+    await sql.query(sql.format('INSERT INTO User SET ?;', userData))
+    res.sendStatus(200); // ok
+  }catch(e){
+    error(res,e);
+  }
+}
+//
+// // add staff, returns ok or error, error gets logged
+// async function addStaff(req,res){
+//   try{
+//     const sql = await connection;
+//     const staffData = {fName: req.fName, lName: req.lName,email: req.email,contactNumber: req.contactNumber}
+//     await sql.query(sql.format('INSERT INTO UserReviews SET ?;', userData))
+//     res.sendStatus(200); // ok
+//   }catch(e){
+//     error(res,e);
+//   }
+// }
+//
 
 
-
-
+ function error(res,msg){
+   res.sendStatus(500)
+   console.error(msg);
 }
 
 
 
-app.post('/home', addReview);
+// serve static pages
+app.use('/',express.static(config.pages,{extensions:['html'] }));
 
+app.post('/home', addReview);
+app.post('/home/user',addUser);
 app.listen(8080, (err) => {
   if (err) console.error('error starting server', err);
   else console.log('server started');

@@ -14,8 +14,9 @@ function pageLoad(e){
   document.getElementById("searchButton").addEventListener('click',searchHandler);
 
   // send request to load books to APS
-    getBooks();
+    //getBooks();
     addReview();
+    addUser();
 }
 
 
@@ -31,7 +32,7 @@ function searchHandler(e){
 
 
 async function addReview(){ // change back to e
-  const userID = 1  ;          // pulled from somewhere
+  const userId = 1  ;          // pulled from somewhere
   const name = "joe" ;          // pulled from the
   const desc = "pretty bad" ;          // pull from dsc box make sure to convert to SQL format to prevent inject
   const score = 3;          // pull from stars
@@ -39,40 +40,41 @@ async function addReview(){ // change back to e
   const publ = "Tricorn Books";           //pull publisher from
 
   let url = 'home';
-  url +='?userID='+userID + '&name=' + name + '&description=' + desc + '&score=' + score + 'bookId=' + bookId + 'publisher' + publ;
-  await fetch(url,{method:'POST'});
+  url +='?userId='+userId + '&name=' + name + '&description=' + desc + '&score=' + score + 'bookId=' + bookId + 'publisher' + publ;
+  let response = await fetch(url,{method:'POST'});
+  console.log(response);
   // reload page
   }
-}
 
 
-// called on load, pulls all books with filters applied + order by
-async function getBooks(){
-  const filters = [] // get all the ticked filters from pages and page type
-  const order =  // pull single ticked order by
-  let url = 'books/';
-  url += '?order=' order;
-  for(let i = 0;i<filters;i++){
-    url+="&filter="+filter[i];
-  }
-  const books = await fetch(url);
-  // add the books to the page in someway
-
-}
-
-// async function addUser(e){
-//   const fName = //pull from google auth
-//   const lName = //pull from google autho
-//   const userName = // have create user name and pull from html
-//   const img = // pull from google autho
-//
-//   let url = 'home/user';
-//   url +='?fName='+fName + '&lName=' +lName+ '&userName=' + userName + '&img=' + img;
-//   const response = await fetch(url);
-//   if(!response.ok) throw response;
-//   // login function / reload page
+// // called on load, pulls all books with filters applied + order by
+// async function getBooks(){
+//   const filters = [] // get all the ticked filters from pages and page type
+//   const order =  // pull single ticked order by
+//   let url = 'books/';
+//   url += '?order=' order;
+//   for(let i = 0;i<filters;i++){
+//     url+="&filter="+filter[i];
+//   }
+//   const books = await fetch(url);
+//   // add the books to the page in someway
 //
 // }
+
+async function addUser(){ // change to e when done
+  const fName = "bobby"//pull from google auth
+  const lName = "bobser"//pull from google autho
+  const userName ="bobbob" // have create user name and pull from html
+  const img = "/not/real/"// pull from google autho
+
+  let url = 'home/user';
+  url +='?fName='+fName + '&lName=' +lName+ '&userName=' + userName + '&img=' + img;
+  const response = await fetch(url,{method:'POST'});
+  if(!response.ok) throw response;
+  console.log(response);
+  // login function / reload page
+
+}
 
 // async function addStaff(e){
 //     const fName = //pull from google auth
@@ -143,4 +145,3 @@ async function getBooks(){
 //     }
 //   }
 // }
-

@@ -1,13 +1,35 @@
 'use static';
-let express = require('express');
-const mysql = require('mysql2/promise');
 
-const intialDb = require('./intialScript');
-intialDb.makeTables();
+// const bodyParser = require('body-parser');
+const express = require('express');
+const mysql = require('mysql2/promise');
+// const passport = require('passport');
 
 const config = require('./config');
+const user = require('./user');
+
+// Database
+// const intialDb = require('./intialScript');
+// intialDb.makeTables();
+
+// parses data submitted through post
+// const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 const app = express();
+
+// serve static pages
+// app.use(express.static(config.pages, { extensions: ['css'] }));
+
+// set view engine
+app.set('view engine', 'ejs');
+
+// routes
+app.get('/', (req, res)=>{
+    res.render('home');
+});
+
+// user routes
+app.use('/user', user);
 
 
 const connection = mysql.createConnection(config.mysql);
@@ -38,8 +60,8 @@ async function addReview(req,res){
 
 
 
-app.use('/', express.static(config.pages, { extensions: ['html'] }));
 app.post('/home', addReview);
+
 app.listen(8080, (err) => {
   if (err) console.error('error starting server', err);
   else console.log('server started');

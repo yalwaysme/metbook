@@ -11,13 +11,11 @@ function pageLoad(e){
 
 
 
-
   document.getElementById("searchButton").addEventListener('click',searchHandler);
 
   // send request to load books to APS
-//  getHomeBooks();
+    getBooks();
     addReview();
-  //
 }
 
 
@@ -40,25 +38,58 @@ async function addReview(){ // change back to e
   const bookId = 2;           // pull from books
   const publ = "Tricorn Books";           //pull publisher from
 
-
   let url = 'home';
   url +='?userID='+userID + '&name=' + name + '&description=' + desc + '&score=' + score + 'bookId=' + bookId + 'publisher' + publ;
-
-
-
-
-  const reviews = await fetch(url,{method:'POST'});
-  if(reviews == "fail"){
-
-    console.log("something went wrong");
-  }
-  else{
-    console.log("success");
-    // reformat page getCurrentBook or getReviews
+  await fetch(url,{method:'POST'});
+  // reload page
   }
 }
 
 
+// called on load, pulls all books with filters applied + order by
+async function getBooks(){
+  const filters = [] // get all the ticked filters from pages and page type
+  const order =  // pull single ticked order by
+  let url = 'books/';
+  url += '?order=' order;
+  for(let i = 0;i<filters;i++){
+    url+="&filter="+filter[i];
+  }
+  const books = await fetch(url);
+  // add the books to the page in someway
+
+}
+
+// async function addUser(e){
+//   const fName = //pull from google auth
+//   const lName = //pull from google autho
+//   const userName = // have create user name and pull from html
+//   const img = // pull from google autho
+//
+//   let url = 'home/user';
+//   url +='?fName='+fName + '&lName=' +lName+ '&userName=' + userName + '&img=' + img;
+//   const response = await fetch(url);
+//   if(!response.ok) throw response;
+//   // login function / reload page
+//
+// }
+
+// async function addStaff(e){
+//     const fName = //pull from google auth
+//     const lName = //pull from google auth
+//     const email = // pull from google auth
+//     const contactNumber = // pull from ???
+//
+//     let url = 'home/staff';
+//     url +='?fName='+fName + '&lName=' +lName+ '&email=' + email + '&contactNumber=' + contactNumber;
+//     await fetch(url);
+//     // reload page
+// }
+
+
+
+
+//spencer version
 // async function getHomeBooks(){
 //   let homeBooksList = await fetch('api/home/books');
 //   // gets List [[list of home books, [list intresting reads],[list of intresting reads] ]
@@ -113,24 +144,3 @@ async function addReview(){ // change back to e
 //   }
 // }
 
-
-
-// async function addStaff(){
-//   // make sure pulled data is put into SQL format
-//   const fName= //pull from input boxes
-//   const lName= //pull from input boxes
-//   const email= //pull from input boxes
-//   const contactNumber= //pull from input boxes
-//
-//   let url = 'api/users/staff';
-//   url +='?fName='+fName + '&lName=' + lName + '&email=' + email + '&contactNumber=' + contactNumber;
-//
-//   const addStaff = await fetch(url,{}'POST'});
-//
-//   if(addStaff == "fail"){
-//     console.log("something went wrong");
-//   }
-//   else{
-//     console.log("success");
-//   }
-// }

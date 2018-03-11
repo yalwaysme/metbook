@@ -17,59 +17,59 @@ const connection = mysql.createConnection(config.mysql);
 (async () => {
   const sql = await connection;
   sql.on('error', (err) => {
-    console.log(err);
+    console.error(err);
     sql.end();
   });
 })();
 
-async function getBooks(req, res) {
-  // find out what sql ordering to use
-  let query = 'SELECT * FROM BOOK'
-  try {
-    const sql = await connection;
-    let order;
-    switch (req.order) {
-      case(a2z):
-        order = 'title ASC';
-        break;
-      case(z2a):
-        order = 'title DESC';
-        break;
-
-      case(auth):
-        order = 'author DESC';
-        break;
-
-      case(isbn):
-        order = 'isbn ASC';
-        break;
-
-      case(publisher):
-        order = 'publisher ASC';
-        break;
-      default:
-        'id DESC'; // order by newest in default
-
-    }
-    query += 'ORDER BY ' + order
-    let books = await sql.query(query); //gets all books, mysql outputs as json so no need to convert
-
-    // decode filter json
-    let filters = JSON.parse(decodeURIComponent(req.filters));
-    // loop to apply to book filters
-    for(let i = 0;i<filters.length;i++){
-
-      //change if to case statement + add more filter
-      if(filters[i] == "author"){
-        // filter the books array using contains
-      }
-      else if (filters[i] == "category") {
-        // apply filter
-      }
-    }
-
-  }
-}
+// async function getBooks(req, res) {
+//   // find out what sql ordering to use
+//   let query = 'SELECT * FROM BOOK'
+//   try {
+//     const sql = await connection;
+//     let order;
+//     switch (req.order) {
+//       case(a2z):
+//         order = 'title ASC';
+//         break;
+//       case(z2a):
+//         order = 'title DESC';
+//         break;
+//
+//       case(auth):
+//         order = 'author DESC';
+//         break;
+//
+//       case(isbn):
+//         order = 'isbn ASC';
+//         break;
+//
+//       case(publisher):
+//         order = 'publisher ASC';
+//         break;
+//       default:
+//         'id DESC'; // order by newest in default
+//
+//     }
+//     query += 'ORDER BY ' + order
+//     let books = await sql.query(query); //gets all books, mysql outputs as json so no need to convert
+//
+//     // decode filter json
+//     let filters = JSON.parse(decodeURIComponent(req.filters));
+//     // loop to apply to book filters
+//     for(let i = 0;i<filters.length;i++){
+//
+//       //change if to case statement + add more filter
+//       if(filters[i] == "author"){
+//         // filter the books array using contains
+//       }
+//       else if (filters[i] == "category") {
+//         // apply filter
+//       }
+//     }
+//
+//   }
+// }
 
 // add a review, responsed ok if update ok else give err + log it
 // adds to userReviews and reviews
@@ -126,13 +126,10 @@ function error(res, msg) {
 
 // serve static pages
 app.use('/', express.static(config.pages, {extensions: ['html']}));
-app.get('/books',getBooks);
+//app.get('/books',getBooks);
 app.post('/home', addReview);
 app.post('/home/user', addUser);
 app.listen(8080, (err) => {
-  if (err)
-    console.error('error starting server', err);
-  else
-    console.log('server started');
-  }
-);
+  if (err) console.error('error starting server', err);
+  else console.log('server started');
+  });

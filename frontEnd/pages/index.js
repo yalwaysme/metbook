@@ -48,19 +48,19 @@ async function addReview(){ // change back to e
 
 
 // called on load, pulls all books with filters applied + order by
-async function getBooks(){
-  let filters = [] // get all the ticked filters from pages and page type
-
-// filters code
-
-  const order =  // pull single ticked order by
-  let url = 'books/';
-  // pass array as json
-  url += '?order=' + order + '&filters= + 'encodeURIComponent(JSON.stringify(filters));
-  const books = await fetch(url);
-  // add the books to the page in someway
-
-}
+// async function getBooks(){
+//   let filters = [] // get all the ticked filters from pages and page type
+//
+// // filters code
+//
+//   const order =  // pull single ticked order by
+//   let url = 'books/';
+//   // pass array as json
+//   url += '?order=' + order + '&filters= + 'encodeURIComponent(JSON.stringify(filters));
+//   const books = await fetch(url);
+//   // add the books to the page in someway
+//
+// }
 
 async function addUser(){ // change to e when done
   const fName = "bobby"//pull from google auth

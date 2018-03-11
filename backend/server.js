@@ -18,7 +18,7 @@ const user = require('./user');
 const app = express();
 
 // serve static pages
-// app.use(express.static(config.pages, { extensions: ['css'] }));
+app.use(express.static('public'));
 
 // set view engine
 app.set('view engine', 'ejs');
